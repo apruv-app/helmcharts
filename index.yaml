@@ -3,7 +3,7 @@ entries:
   standard-cron:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2023-08-16T16:16:59.421678-06:00"
+    created: "2023-08-16T16:29:34.65031-06:00"
     description: A Helm chart for Kubernetes
     digest: 8b2d04921bd5f90a14c839d703f77bdd8c7dff37bea4fa65b09e59c37ce2e4bd
     name: standard-cron
@@ -14,22 +14,12 @@ entries:
   standard-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2023-08-16T16:16:59.42133-06:00"
+    created: "2023-08-16T16:29:34.650549-06:00"
     description: Apruv's helm charts for service deployments
-    digest: 9ec0a33b8aa2c92ff1bff4b5b14cdf65554a7e75ab1c9a0cd9aafb81193e5eb0
-    name: standard-service
-    type: application
-    urls:
-    - standard-service-0.1.0.tgz
-    version: 0.1.0
-  - apiVersion: v2
-    appVersion: 1.16.0
-    created: "2023-08-16T16:16:59.422277-06:00"
-    description: Apruv's helm charts for service deployments
-    digest: 43cd44a32a3e3917420f931ed44b96acd369bf92ce40c36e1cb82b10a3fe7c21
+    digest: df6125248dc52ec1fae5dba9e4838f641534063e89bbd576b8934b2fed7eba3a
     name: standard-service
     type: application
     urls:
     - apruv-helmcharts/standard-service-0.1.0.tgz
     version: 0.1.0
-generated: "2023-08-16T16:16:59.420863-06:00"
+generated: "2023-08-16T16:29:34.649776-06:00"

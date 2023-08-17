@@ -39,11 +39,13 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- if .Values.tls | default .enabled false }}
+          {{- with .Values.tls }}
+          {{- if .enabled }}
           volumeMounts:
           - name: tls-certificate
             mountPath: /etc/tls
             readOnly: true
+          {{- end }}
           {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}

@@ -39,6 +39,12 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          {{- if .Values.tls.enabled }}
+          volumeMounts:
+          - name: tls-certificate
+            mountPath: /etc/tls
+            readOnly: true
+          {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{ required "Image must be specified" .Values.image | quote }}
@@ -73,6 +79,12 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- toYaml .Values.envVars | nindent 12 }}
+      {{- if .Values.tls.enabled }}
+      volumes:
+      - name: tls-certificate
+        secret:
+          secretName: {{ .Values.tls.secretName }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -81,11 +81,13 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- toYaml .Values.envVars | nindent 12 }}
-      {{- if .Values.tls | default .enabled false }}
+      {{- with .Values.tls }}
+      {{- if .enabled }}
       volumes:
       - name: tls-certificate
         secret:
           secretName: {{ .Values.tls.secretName }}
+      {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

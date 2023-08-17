@@ -21,6 +21,19 @@ spec:
       targetPort: {{ .Values.service.ports.http }}
     {{- end }}
     {{- end }}
+    {{- if .Values.service.ports.https }}
+    {{- if kindIs "map" .Values.service.ports.https }}
+    - protocol: TCP
+      port: {{ .Values.service.ports.https }}
+      name: https
+      targetPort: {{ .Values.service.ports.https }}
+    {{- else }}
+    - protocol: TCP
+      port: 3001
+      name: https
+      targetPort: {{ .Values.service.ports.https }}
+    {{- end }}
+    {{- end }}
     # {{- if .Values.service.ports.health }}
     # - protocol: TCP
     #   port: {{ .Values.service.ports.health }}

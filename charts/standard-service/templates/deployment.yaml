@@ -39,7 +39,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- if .Values.tls.enabled }}
+          {{- if .Values.tls | default .enabled false }}
           volumeMounts:
           - name: tls-certificate
             mountPath: /etc/tls
@@ -79,7 +79,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- toYaml .Values.envVars | nindent 12 }}
-      {{- if .Values.tls.enabled }}
+      {{- if .Values.tls | default .enabled false }}
       volumes:
       - name: tls-certificate
         secret:

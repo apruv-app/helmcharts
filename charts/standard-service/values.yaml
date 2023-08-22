@@ -49,6 +49,10 @@ healthCheckTimeoutSeconds: 3
 
 ingress: {}
 
+sealedSecrets:
+  enabled: true
+  values: []
+
 # ingress:
 #   enabled: false
 #   className: ""

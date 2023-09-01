@@ -29,6 +29,9 @@ spec:
             {{- .Values.imagePullSecrets | toYaml | nindent 12 }}
           volumes:
             {{- .Values.volumes | toYaml | nindent 12 }}
+            - name: cloudsql-instance-credentials
+              secret:
+                secretName: {{ .Values.cloudSqlProxy.secretName }}
           containers:
             - name: {{ include "standard-cron.fullname" . }}
               image: {{ .Values.image | required ".Values.image is required" }}
@@ -46,3 +49,15 @@ spec:
                 {{- .Values.envVars | toYaml | nindent 16 }}
               resources:
                 {{- .Values.resources | toYaml | nindent 16 }}
+            - name: cloud-sql-proxy
+              image: gcr.io/cloudsql-docker/gce-proxy:1.16
+              command: 
+                - "/cloud_sql_proxy"
+                - "-instances"
+                - {{ .Values.cloudSqlProxy.instances | quote }}
+                - "-credential_file"
+                - "/secrets/cloudsql/credentials.json"
+              volumeMounts:
+              - name: cloudsql-instance-credentials
+                mountPath: /secrets/cloudsql
+                readOnly: true

@@ -25,8 +25,10 @@ spec:
           serviceAccount: {{ . }}
           {{- end }}
           restartPolicy: {{ .Values.restartPolicy | quote }}
+          {{- if .Values.imagePullSecrets }}
           imagePullSecrets:
             {{- .Values.imagePullSecrets | toYaml | nindent 12 }}
+          {{- end }}
           volumes:
             {{- .Values.volumes | toYaml | nindent 12 }}
           containers:

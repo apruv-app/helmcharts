@@ -28,9 +28,5 @@ volumes: {}
 
 volumeMounts: []
 
-cloudSqlProxy:
-  enabled: true
-  image: "gcr.io/cloudsql-docker/gce-proxy:1.16"
-  instances: ""
 
 

@@ -54,6 +54,7 @@ spec:
                 - "--structured-logs"
                 - "--port=5432"
                 - {{- .Values.instanceConnName | quote }}
+                - "--credentials-file=/secrets/service_account.json"
               securityContext:
                 runAsNonRoot: true
               volumeMounts:

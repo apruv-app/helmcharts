@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "standard-cron.fullname" . }}-scripts
+  labels:
+    ...
+data:
+  kill-cloud-sql-proxy.sh: |
+    #!/bin/sh
+    PROXY_PID=$(pgrep cloud-sql-proxy)
+    if [ -n "$PROXY_PID" ]; then
+        kill -SIGTERM $PROXY_PID
+    else
+        echo "cloud-sql-proxy process not found!"
+    fi

@@ -21,6 +21,7 @@ spec:
             {{- toYaml . | nindent 12 }}
         {{- end }}
         spec:
+          shareProcessNamespace: true
           {{- with .Values.serviceAccount }}
           serviceAccount: {{ . }}
           {{- end }}
@@ -30,9 +31,18 @@ spec:
             {{- .Values.imagePullSecrets | toYaml | nindent 12 }}
           {{- end }}
           volumes:
-            {{- .Values.volumes | toYaml | nindent 12 }}
+            - name: scripts-volume
+              configMap:
+                name: {{ include "standard-cron.fullname" . }}-scripts
+            {{- if .Values.volumes }}
+            {{ toYaml .Values.volumes | indent 2 }}
+            {{- end }}
           containers:
             - name: {{ include "standard-cron.fullname" . }}
+              lifecycle:
+                preStop:
+                  exec:
+                    command: ["/scripts/kill-cloud-sql-proxy.sh"]
               image: {{ .Values.image | required ".Values.image is required" }}
               {{- with .Values.command }}
               command:
@@ -43,7 +53,11 @@ spec:
                 {{- . | toYaml | nindent 16 }}
               {{- end }}
               volumeMounts:
-                {{- .Values.volumeMounts | toYaml | nindent 16 }}
+                - name: scripts-volume
+                  mountPath: /scripts
+                {{- if .Values.volumeMounts }}
+                {{ toYaml .Values.volumeMounts | indent 12 }}
+                {{- end }}
               env:
                 {{- .Values.envVars | toYaml | nindent 16 }}
               resources:

@@ -66,3 +66,4 @@ spec:
                   mountPath: /usr/shared/data
                 - name: sidecar-script
                   mountPath: /scripts
+              command: ["/scripts/sidecar-script.sh"]

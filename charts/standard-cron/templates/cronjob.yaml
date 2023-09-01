@@ -58,7 +58,7 @@ spec:
                 - "/secrets/cloudsql/credentials.json"
                 - "-p"
                 - "5432"
-            volumeMounts:
-              - name: cloudsql-instance-credentials
-                mountPath: /secrets/cloudsql
-                readOnly: true
+              volumeMounts:
+                - name: cloudsql-instance-credentials
+                  mountPath: /secrets/cloudsql
+                  readOnly: true

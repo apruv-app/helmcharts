@@ -26,4 +26,7 @@ volumes: []
 
 volumeMounts: []
 
+cloudSqlProxy:
+  secretName: ksa-cloud-sql_client
+
 

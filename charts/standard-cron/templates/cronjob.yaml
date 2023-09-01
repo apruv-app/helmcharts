@@ -52,11 +52,12 @@ spec:
             - name: cloud-sql-proxy
               image: gcr.io/cloudsql-docker/gce-proxy:1.16
               command: 
-                - "/cloud_sql_proxy"
-                - "-instances"
+                - "/cloud-sql-proxy"
                 - {{ .Values.cloudSqlProxy.instances | quote }}
-                - "-credential_file"
+                - "-credentials-file"
                 - "/secrets/cloudsql/credentials.json"
+                - "-p"
+                - "5432"
               volumeMounts:
               - name: cloudsql-instance-credentials
                 mountPath: /secrets/cloudsql

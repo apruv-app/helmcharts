@@ -25,10 +25,10 @@ spec:
           serviceAccount: {{ . }}
           {{- end }}
           restartPolicy: {{ .Values.restartPolicy | quote }}
+          imagePullSecrets:
+            {{- .Values.imagePullSecrets | toYaml | nindent 12 }}
           volumes:
-            - name: cloudsql-instance-credentials
-              secret:
-                secretName: {{ .Values.cloudSqlProxy.secretName }}
+            {{- .Values.volumes | toYaml | nindent 12 }}
           containers:
             - name: {{ include "standard-cron.fullname" . }}
               image: {{ .Values.image | required ".Values.image is required" }}

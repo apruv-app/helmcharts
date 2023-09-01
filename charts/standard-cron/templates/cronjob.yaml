@@ -49,14 +49,14 @@ spec:
               resources:
                 {{- .Values.resources | toYaml | nindent 16 }}
             - name: cloud-sql-proxy
-              image: gcr.io/cloudsql-docker/gce-proxy:1.16
-              command: 
-                - "/cloud-sql-proxy"
+              image: gcr.io/cloudsql-docker/gce-proxy:2.1.0
               args:
-                - {{ .Values.cloudSqlProxy.instances | quote }}
-                - "-credentials-file=/secrets/cloudsql/credentials.json"
-                - "-p=5432"
+                - "--structured-logs"
+                - "--port=5432"
+                - "<INSTANCE_CONNECTION_NAME>"
+              securityContext:
+                runAsNonRoot: true
               volumeMounts:
                 - name: cloudsql-instance-credentials
-                  mountPath: /secrets/cloudsql
+                  mountPath: /secrets/
                   readOnly: true

@@ -22,6 +22,8 @@ podAnnotations: {}
 
 resources: {}
 
+instanceConnName: ""
+
 volumes: {}
 
 volumeMounts: []

@@ -25,10 +25,8 @@ spec:
           serviceAccount: {{ . }}
           {{- end }}
           restartPolicy: {{ .Values.restartPolicy | quote }}
-          {{- if .Values.imagePullSecrets }}
           imagePullSecrets:
             {{- .Values.imagePullSecrets | toYaml | nindent 12 }}
-          {{- end }}
           volumes:
             {{- .Values.volumes | toYaml | nindent 12 }}
           containers:
@@ -43,27 +41,8 @@ spec:
                 {{- . | toYaml | nindent 16 }}
               {{- end }}
               volumeMounts:
-                - name: shared-data
-                  mountPath: /usr/shared/data
+                {{- .Values.volumeMounts | toYaml | nindent 16 }}
               env:
                 {{- .Values.envVars | toYaml | nindent 16 }}
               resources:
                 {{- .Values.resources | toYaml | nindent 16 }}
-            - name: cloud-sql-proxy
-              image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.1.0
-              args:
-                - "--structured-logs"
-                - "--port=5432"
-                - {{ .Values.instanceConnName | quote }}
-                - "--credentials-file=/secrets/service_account.json"
-              securityContext:
-                runAsNonRoot: true
-              volumeMounts:
-                - name: cloudsql-instance-credentials
-                  mountPath: /secrets/
-                  readOnly: true
-                - name: shared-data
-                  mountPath: /usr/shared/data
-                - name: sidecar-script
-                  mountPath: /scripts
-              command: ["/scripts/sidecar-script.sh"]

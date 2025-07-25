@@ -9,7 +9,7 @@ entries:
     name: standard-cron
     type: application
     urls:
-    - standard-cron-0.1.1.tgz
+    - apruv-helmcharts/standard-cron-0.1.1.tgz
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
@@ -19,7 +19,7 @@ entries:
     name: standard-cron
     type: application
     urls:
-    - standard-cron-0.1.0.tgz
+    - apruv-helmcharts/standard-cron-0.1.0.tgz
     version: 0.1.0
   standard-service:
   - apiVersion: v2
@@ -30,6 +30,6 @@ entries:
     name: standard-service
     type: application
     urls:
-    - standard-service-0.1.0.tgz
+    - apruv-helmcharts/standard-service-0.1.0.tgz
     version: 0.1.0
 generated: "2025-07-25T06:08:39.186808-06:00"

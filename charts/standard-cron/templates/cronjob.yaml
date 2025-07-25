@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "standard-cron.fullname" . }}
+  labels:
+    {{- include "standard-cron.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.schedule | required ".Values.schedule is required" | quote }}
+  suspend: {{ .Values.suspend }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
+      backoffLimit: {{ .Values.backoffLimit }}
+      template:
+        metadata:
+          labels:
+            {{- include "standard-cron.selectorLabels" . | nindent 12 }}
+        {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        spec:
+          {{- with .Values.serviceAccount }}
+          serviceAccount: {{ . }}
+          {{- end }}
+          restartPolicy: {{ .Values.restartPolicy | quote }}
+          imagePullSecrets:
+            {{- .Values.imagePullSecrets | toYaml | nindent 12 }}
+          volumes:
+            {{- .Values.volumes | toYaml | nindent 12 }}
+          containers:
+            - name: {{ include "standard-cron.fullname" . }}
+              image: {{ .Values.image | required ".Values.image is required" }}
+              {{- with .Values.command }}
+              command:
+                {{ . | toYaml | nindent 16 }}
+              {{- end }}
+              {{- with .Values.args }}
+              args:
+                {{- . | toYaml | nindent 16 }}
+              {{- end }}
+              volumeMounts:
+                {{- .Values.volumeMounts | toYaml | nindent 16 }}
+              env:
+                {{- .Values.envVars | toYaml | nindent 16 }}
+              resources:
+                {{- .Values.resources | toYaml | nindent 16 }}

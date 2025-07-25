@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sidecar-script
+data:
+  sidecar-script.sh: |
+    #!/bin/sh
+
+    # Run cloud-sql-proxy in the background
+    /cloud_sql_proxy --structured-logs --port=5432 ${CONNECTION_STRING} --credentials-file=/secrets/service_account.json &
+
+    # Store its PID
+    PID=$!
+
+    # Continuously check for done.txt
+    while true; do
+        if [ -f /usr/shared/data/done.txt ]; then
+            kill -SIGTERM $PID
+            break
+        fi
+        sleep 5
+    done
+
+    # Wait for cloud-sql-proxy to terminate
+    wait $PID

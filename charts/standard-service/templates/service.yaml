@@ -1,0 +1,49 @@
+{{- if .Values.service }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "standard-service.fullname" . }}
+spec:
+  type: {{ default "ClusterIP" .Values.service.type }}
+  selector:
+    {{- include "standard-service.selectorLabels" . | nindent 4 }}
+  ports:
+    {{- if .Values.service.ports.http }}
+    {{- if kindIs "map" .Values.service.ports.http }}
+    - protocol: TCP
+      port: {{ .Values.service.ports.http }}
+      name: http
+      targetPort: {{ .Values.service.ports.http }}
+    {{- else }}
+    - protocol: TCP
+      port: 3001
+      name: http
+      targetPort: {{ .Values.service.ports.http }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.service.ports.https }}
+    {{- if kindIs "map" .Values.service.ports.https }}
+    - protocol: TCP
+      port: {{ .Values.service.ports.https }}
+      name: https
+      targetPort: {{ .Values.service.ports.https }}
+    {{- else }}
+    - protocol: TCP
+      port: 3001
+      name: https
+      targetPort: {{ .Values.service.ports.https }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.service.ports.health }}
+    - protocol: TCP
+      port: {{ .Values.service.ports.health }}
+      name: http-health
+      targetPort: {{ .Values.service.ports.health }}
+    {{- end }}
+    {{- if .Values.service.ports.metrics }}
+    - protocol: TCP
+      port: {{ .Values.service.ports.metrics }}
+      name: http-metrics
+      targetPort: {{ .Values.service.ports.metrics }}
+    {{- end }}
+{{- end }}

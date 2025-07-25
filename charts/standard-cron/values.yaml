@@ -1,0 +1,30 @@
+# Default values for standard-cron.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+suspend: false
+
+restartPolicy: OnFailure
+
+failedJobsHistoryLimit: 3
+
+activeDeadlineLimit: 3
+
+activeDeadlineSeconds: 7200
+
+backoffLimit: 3
+
+nameOverride: ""
+
+fullnameOverride: ""
+
+podAnnotations: {}
+
+resources: {}
+
+volumes: []
+
+volumeMounts: []
+
+
+

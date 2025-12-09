@@ -95,3 +95,14 @@ tolerations: []
 affinity: {}
 
 envVars: []
+
+serviceMonitor:
+  enabled: false
+  # labels to add to the ServiceMonitor (e.g., release: kube-prometheus-stack)
+  labels: {}
+  # metrics port name (must match a port name in service.ports)
+  port: metrics
+  # scrape interval
+  interval: 30s
+  # metrics path
+  path: /

@@ -17,7 +17,7 @@ spec:
     matchNames:
       - {{ .Release.Namespace }}
   endpoints:
-    - port: {{ .Values.serviceMonitor.port | default "metrics" }}
+    - port: {{ .Values.serviceMonitor.port | default "http-metrics" }}
       path: {{ .Values.serviceMonitor.path | default "/" }}
       interval: {{ .Values.serviceMonitor.interval | default "30s" }}
 {{- end }}

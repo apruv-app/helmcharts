@@ -101,7 +101,7 @@ serviceMonitor:
   # labels to add to the ServiceMonitor (e.g., release: kube-prometheus-stack)
   labels: {}
   # metrics port name (must match a port name in service.ports)
-  port: metrics
+  port: http-metrics
   # scrape interval
   interval: 30s
   # metrics path

@@ -3,7 +3,7 @@ entries:
   standard-cron:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.718174-07:00"
+    created: "2026-01-06T01:04:01.621503-07:00"
     description: A Helm chart for Kubernetes
     digest: 67aa86e9088283e0a7eb23c82ed68b6442ca820fbc3bbab2e1ce3f390fdc1114
     name: standard-cron
@@ -13,7 +13,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.717843-07:00"
+    created: "2026-01-06T01:04:01.621197-07:00"
     description: A Helm chart for Kubernetes
     digest: 8b2d04921bd5f90a14c839d703f77bdd8c7dff37bea4fa65b09e59c37ce2e4bd
     name: standard-cron
@@ -24,7 +24,17 @@ entries:
   standard-service:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.720218-07:00"
+    created: "2026-01-06T01:04:01.624015-07:00"
+    description: Apruv's helm charts for service deployments
+    digest: a7c292c1d44e5988e28da3980197f733cfafa7cd6322547f41f37fb82392dcec
+    name: standard-service
+    type: application
+    urls:
+    - apruv-helmcharts/standard-service-0.1.6.tgz
+    version: 0.1.6
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-01-06T01:04:01.623617-07:00"
     description: Apruv's helm charts for service deployments
     digest: 2ed335e47c2270ba0f551960962af5aba70f8c22e388de20578288ff825084eb
     name: standard-service
@@ -34,7 +44,7 @@ entries:
     version: 0.1.5
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.719955-07:00"
+    created: "2026-01-06T01:04:01.623141-07:00"
     description: Apruv's helm charts for service deployments
     digest: 7200a807de1951a2a046ff5c0ea52e14c0cf22f1301d759d2c253de4a233c5a3
     name: standard-service
@@ -44,7 +54,7 @@ entries:
     version: 0.1.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.719531-07:00"
+    created: "2026-01-06T01:04:01.622688-07:00"
     description: Apruv's helm charts for service deployments
     digest: 7c7cc1581e5fea86c7bec7582574c3efaf74b9f5615fb70b99afe03ad5942d50
     name: standard-service
@@ -54,7 +64,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.718973-07:00"
+    created: "2026-01-06T01:04:01.622267-07:00"
     description: Apruv's helm charts for service deployments
     digest: b3a46b619705a437fc569606ed52168bf3e757662fa38d771aa0b2ce9ce2a9ab
     name: standard-service
@@ -64,7 +74,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-01-04T20:48:42.718576-07:00"
+    created: "2026-01-06T01:04:01.621866-07:00"
     description: Apruv's helm charts for service deployments
     digest: 78f7aa99276fa1b66333f106f6155d2ed1b5837cfc73dbf513009b40f6a1bc31
     name: standard-service
@@ -72,4 +82,4 @@ entries:
     urls:
     - apruv-helmcharts/standard-service-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-04T20:48:42.717126-07:00"
+generated: "2026-01-06T01:04:01.620572-07:00"

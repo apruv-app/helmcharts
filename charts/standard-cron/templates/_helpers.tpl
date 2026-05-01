@@ -49,3 +49,18 @@ Selector labels
 app.kubernetes.io/name: {{ include "standard-cron.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Resolve the pod's serviceAccountName.
+
+Prefers the canonical `serviceAccountName` value. Falls back to the deprecated
+`serviceAccount` key, which earlier versions of this chart accepted. Returns an
+empty string when neither is set so the caller can skip emitting the field.
+*/}}
+{{- define "standard-cron.serviceAccountName" -}}
+{{- if .Values.serviceAccountName -}}
+{{- .Values.serviceAccountName -}}
+{{- else if .Values.serviceAccount -}}
+{{- .Values.serviceAccount -}}
+{{- end -}}
+{{- end }}

@@ -3,28 +3,41 @@
 # Declare variables to be passed into your templates.
 
 suspend: false
-
 restartPolicy: OnFailure
 
+# CronJob spec
+# concurrencyPolicy mirrors the Kubernetes default of "Allow". For periodic
+# data jobs, "Forbid" is usually safer; set it explicitly per release.
+concurrencyPolicy: Allow
+# startingDeadlineSeconds: 120
+successfulJobsHistoryLimit: 3
 failedJobsHistoryLimit: 3
+# timeZone: "America/Los_Angeles"
 
-activeDeadlineLimit: 3
-
+# Job spec
 activeDeadlineSeconds: 7200
-
 backoffLimit: 3
 
+# Naming / identity
 nameOverride: ""
-
 fullnameOverride: ""
+# serviceAccountName is the canonical key. `serviceAccount` is also accepted
+# for backwards compatibility with releases written against chart < 0.2.0.
+serviceAccountName: ""
+serviceAccount: ""
 
+# Pod
 podAnnotations: {}
+podSecurityContext: {}
+securityContext: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
 
+# Containers
 resources: {}
-
 volumes: []
-
 volumeMounts: []
-
-
-
+extraContainers: []
+extraInitContainers: []
+imagePullSecrets: []

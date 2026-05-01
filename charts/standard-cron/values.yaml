@@ -6,9 +6,7 @@ suspend: false
 restartPolicy: OnFailure
 
 # CronJob spec
-# concurrencyPolicy mirrors the Kubernetes default of "Allow". For periodic
-# data jobs, "Forbid" is usually safer; set it explicitly per release.
-concurrencyPolicy: Allow
+concurrencyPolicy: Forbid
 # startingDeadlineSeconds: 120
 successfulJobsHistoryLimit: 3
 failedJobsHistoryLimit: 3

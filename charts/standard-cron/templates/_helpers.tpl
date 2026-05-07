@@ -53,14 +53,27 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Resolve the pod's serviceAccountName.
 
-Prefers the canonical `serviceAccountName` value. Falls back to the deprecated
-`serviceAccount` key, which earlier versions of this chart accepted. Returns an
-empty string when neither is set so the caller can skip emitting the field.
+Resolution order (first match wins):
+  1. Top-level `serviceAccountName` (canonical string).
+  2. Map-shaped `serviceAccount` with `create: true` — name is `serviceAccount.name`,
+     defaulting to the chart fullname when unset. Pairs with the
+     `serviceaccount.yaml` template, which renders a ServiceAccount resource
+     in the same case.
+  3. Map-shaped `serviceAccount` with `name` set but `create: false` — the user
+     is referencing a SA created elsewhere.
+  4. String-shaped `serviceAccount` (legacy; still accepted for back-compat).
+
+Returns an empty string when none of the above matches, so the caller can
+skip emitting the field via `with include`.
 */}}
 {{- define "standard-cron.serviceAccountName" -}}
 {{- if .Values.serviceAccountName -}}
 {{- .Values.serviceAccountName -}}
-{{- else if .Values.serviceAccount -}}
+{{- else if and (kindIs "map" .Values.serviceAccount) .Values.serviceAccount.create -}}
+{{- default (include "standard-cron.fullname" .) .Values.serviceAccount.name -}}
+{{- else if and (kindIs "map" .Values.serviceAccount) .Values.serviceAccount.name -}}
+{{- .Values.serviceAccount.name -}}
+{{- else if kindIs "string" .Values.serviceAccount -}}
 {{- .Values.serviceAccount -}}
 {{- end -}}
 {{- end }}

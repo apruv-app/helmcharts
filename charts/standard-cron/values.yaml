@@ -19,10 +19,16 @@ backoffLimit: 3
 # Naming / identity
 nameOverride: ""
 fullnameOverride: ""
-# serviceAccountName is the canonical key. `serviceAccount` is also accepted
-# for backwards compatibility with releases written against chart < 0.2.0.
+# Service account configuration. Three shapes are supported:
+#   1. `serviceAccountName: "<name>"` — canonical, references an existing SA.
+#   2. `serviceAccount: { create: true, name: "<name>", annotations: {...} }` —
+#      chart creates the SA (use this for Workload Identity).
+#   3. `serviceAccount: "<name>"` — legacy string; references an existing SA.
 serviceAccountName: ""
-serviceAccount: ""
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}
 
 # Pod
 podAnnotations: {}

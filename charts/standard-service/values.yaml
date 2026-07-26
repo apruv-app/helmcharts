@@ -47,6 +47,10 @@ jaegerTracing: false
 
 healthCheckTimeoutSeconds: 3
 
+livenessProbe: {}
+readinessProbe: {}
+startupProbe: {}
+
 ingress: {}
 
 sealedSecrets:

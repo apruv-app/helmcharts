@@ -31,6 +31,15 @@ serviceAccount:
 
 podAnnotations: {}
 
+# Additional pod labels; selector labels are reserved and cannot be overridden.
+podLabels: {}
+
+# Optional Kubernetes probe objects for the primary service container.
+# Empty maps preserve the existing behavior: no probes are rendered.
+livenessProbe: {}
+readinessProbe: {}
+startupProbe: {}
+
 podSecurityContext: {}
   # fsGroup: 2000
 

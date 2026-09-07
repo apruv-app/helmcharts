@@ -1,0 +1,23 @@
+name: Test standard-service chart
+on:
+  pull_request:
+    paths:
+      - 'charts/standard-service/**'
+      - 'tests/test_standard_service.py'
+      - '.github/workflows/test-standard-service.yaml'
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+      - run: pip install PyYAML==6.0.2
+      - run: helm lint charts/standard-service
+      - run: python -m unittest discover -s tests -v

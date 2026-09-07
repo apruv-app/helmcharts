@@ -1,3 +1,9 @@
+{{- $selectorLabels := include "standard-service.selectorLabels" . | fromYaml -}}
+{{- range $key, $value := .Values.podLabels -}}
+{{- if hasKey $selectorLabels $key -}}
+{{- fail (printf "podLabels must not override selector label %s" $key) -}}
+{{- end -}}
+{{- end -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,6 +33,9 @@ spec:
       {{- end }}
       labels:
         {{- include "standard-service.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "standard-service.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
@@ -66,16 +75,18 @@ spec:
               containerPort: {{ .Values.service.ports.metrics }}
               protocol: TCP
             {{- end }}
-          # livenessProbe:
-          #   timeoutSeconds: {{ .Values.healthCheckTimeoutSeconds }}
-          #   httpGet:
-          #     path: /health
-          #     port: http-health
-          # readinessProbe:
-          #   timeoutSeconds: {{ .Values.healthCheckTimeoutSeconds }}
-          #   httpGet:
-          #     path: /health
-          #     port: http-health
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:

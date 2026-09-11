@@ -62,3 +62,40 @@ class DeploymentContract(unittest.TestCase):
             result = render({'podLabels': {key: 'different'}})
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('must not override selector label', result.stderr)
+
+
+    def test_default_has_no_extra_volumes(self):
+        pod = deployment({})['spec']['template']['spec']
+        self.assertNotIn('volumes', pod)
+        self.assertNotIn('volumeMounts', pod['containers'][0])
+
+    def test_bounded_scratch_with_tls_and_application_security(self):
+        for tls in [False, True]:
+            with self.subTest(tls=tls):
+                scratch = {'name': 'proof-scratch', 'emptyDir': {'medium': 'Memory', 'sizeLimit': '64Mi'}}
+                mount = {'name': 'proof-scratch', 'mountPath': '/var/run/proof-media'}
+                security = {'runAsUser': 65532, 'runAsNonRoot': True, 'readOnlyRootFilesystem': True,
+                            'allowPrivilegeEscalation': False, 'capabilities': {'drop': ['ALL']}}
+                pod = deployment({'tls': {'enabled': tls, 'secretName': 'existing-tls'},
+                                  'extraVolumes': [scratch], 'extraVolumeMounts': [mount],
+                                  'securityContext': security,
+                                  'extraContainers': [{'name': 'proxy', 'image': 'proxy:test'}]})['spec']['template']['spec']
+                app = next(c for c in pod['containers'] if c['name'] == 'standard-service')
+                self.assertEqual(app['securityContext'], security)
+                self.assertEqual(pod['volumes'], ([{'name': 'tls-certificate', 'secret': {'secretName': 'existing-tls'}}] if tls else []) + [scratch])
+                self.assertEqual(app['volumeMounts'], ([{'name': 'tls-certificate', 'mountPath': '/etc/tls', 'readOnly': True}] if tls else []) + [mount])
+                self.assertNotIn('volumeMounts', pod['containers'][0])
+
+
+    def test_invalid_volume_references_and_collisions_fail_render(self):
+        cases = [
+            ({'extraVolumes': [{'name': 'scratch'}, {'name': 'scratch'}]}, 'duplicate volume name'),
+            ({'tls': {'enabled': True}, 'extraVolumes': [{'name': 'tls-certificate'}]}, 'duplicate volume name'),
+            ({'extraVolumeMounts': [{'name': 'missing', 'mountPath': '/scratch'}]}, 'unknown volume name'),
+            ({'tls': {'enabled': True}, 'extraVolumeMounts': [{'name': 'tls-certificate', 'mountPath': '/etc/tls'}]}, 'duplicate mount path'),
+        ]
+        for values, error in cases:
+            with self.subTest(error=error, values=values):
+                result = render(values)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(error, result.stderr)

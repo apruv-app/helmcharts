@@ -120,3 +120,9 @@ serviceMonitor:
   interval: 30s
   # metrics path
   path: /
+
+# Optional pod volumes and mounts on the main application container.
+# Mount names must reference a declared volume. Avoid the reserved TLS name
+# tls-certificate when tls.enabled is true. Sidecar mounts remain explicit.
+extraVolumes: []
+extraVolumeMounts: []

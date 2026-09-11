@@ -1,3 +1,21 @@
+{{- $volumeNames := dict -}}
+{{- $mountPaths := dict -}}
+{{- if .Values.tls.enabled -}}
+{{- $_ := set $volumeNames "tls-certificate" true -}}
+{{- $_ := set $mountPaths "/etc/tls" true -}}
+{{- end -}}
+{{- range .Values.extraVolumes -}}
+{{- $name := required "extraVolumes requires a name" .name -}}
+{{- if hasKey $volumeNames $name -}}{{- fail (printf "duplicate volume name %s" $name) -}}{{- end -}}
+{{- $_ := set $volumeNames $name true -}}
+{{- end -}}
+{{- range .Values.extraVolumeMounts -}}
+{{- $name := required "extraVolumeMounts requires a name" .name -}}
+{{- $path := required "extraVolumeMounts requires a mountPath" .mountPath -}}
+{{- if not (hasKey $volumeNames $name) -}}{{- fail (printf "unknown volume name %s" $name) -}}{{- end -}}
+{{- if hasKey $mountPaths $path -}}{{- fail (printf "duplicate mount path %s" $path) -}}{{- end -}}
+{{- $_ := set $mountPaths $path true -}}
+{{- end -}}
 {{- $selectorLabels := include "standard-service.selectorLabels" . | fromYaml -}}
 {{- range $key, $value := .Values.podLabels -}}
 {{- if hasKey $selectorLabels $key -}}
@@ -49,11 +67,16 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         - name: {{ .Chart.Name }}
-          {{- if .Values.tls.enabled }}
+          {{- if or .Values.tls.enabled .Values.extraVolumeMounts }}
           volumeMounts:
+          {{- if .Values.tls.enabled }}
           - name: tls-certificate
             mountPath: /etc/tls
             readOnly: true
+          {{- end }}
+          {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
           {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -91,11 +114,16 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- toYaml .Values.envVars | nindent 12 }}
-      {{- if .Values.tls.enabled }}
+      {{- if or .Values.tls.enabled .Values.extraVolumes }}
       volumes:
+      {{- if .Values.tls.enabled }}
       - name: tls-certificate
         secret:
           secretName: {{ .Values.tls.secretName }}
+      {{- end }}
+      {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

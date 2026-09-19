@@ -4,10 +4,11 @@
 
 replicaCount: 1
 
-# Optional Kubernetes Deployment update strategy, for example:
-# deploymentStrategy:
-#   type: Recreate
-deploymentStrategy: {}
+deploymentStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
 
 image: ngnix:latest
 imagePullPolicy: Always
@@ -56,6 +57,10 @@ service:
   ports:
     health: 8080
     metrics: 8090
+
+# Kubernetes sends SIGTERM to the container and waits this long for the
+# process to drain. Keep lifecycle hooks shell-free for distroless images.
+terminationGracePeriodSeconds: 60
 
 jaegerTracing: false
 

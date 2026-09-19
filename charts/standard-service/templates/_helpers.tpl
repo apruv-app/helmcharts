@@ -62,6 +62,30 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Return the externally-visible HTTP Service port. Scalar HTTP values retain
+the chart's legacy 3001 Service port and use the scalar as targetPort. Map
+values opt into explicit port and targetPort declarations.
+*/}}
+{{- define "standard-service.httpServicePort" -}}
+{{- if kindIs "map" .Values.service.ports.http -}}
+{{- required "service.ports.http.port is required when http is a map" .Values.service.ports.http.port -}}
+{{- else -}}
+3001
+{{- end -}}
+{{- end }}
+
+{{/* Return a usable Service port for the Helm connection test. */}}
+{{- define "standard-service.testServicePort" -}}
+{{- if .Values.service.ports.http -}}
+{{- include "standard-service.httpServicePort" . -}}
+{{- else if .Values.service.ports.health -}}
+{{- .Values.service.ports.health -}}
+{{- else -}}
+{{- .Values.service.ports.metrics -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Environment hostname
 */}}
 {{- define "ingressHostname" -}}

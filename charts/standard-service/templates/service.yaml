@@ -18,7 +18,7 @@ spec:
       targetPort: {{ default .Values.service.ports.http.port .Values.service.ports.http.targetPort }}
     {{- else }}
     - protocol: TCP
-      port: {{ .Values.service.ports.http }}
+      port: {{ include "standard-service.httpServicePort" . }}
       name: http
       targetPort: {{ .Values.service.ports.http }}
     {{- end }}

@@ -22,6 +22,12 @@ def deployment(values):
     return next(doc for doc in yaml.safe_load_all(result.stdout) if doc and doc['kind'] == 'Deployment')
 
 
+def service(values):
+    result = render(values)
+    assert result.returncode == 0, result.stderr
+    return next(doc for doc in yaml.safe_load_all(result.stdout) if doc and doc['kind'] == 'Service')
+
+
 class DeploymentContract(unittest.TestCase):
     def test_defaults_preserve_no_probes_and_selector_labels(self):
         dep = deployment({})
@@ -62,3 +68,15 @@ class DeploymentContract(unittest.TestCase):
             result = render({'podLabels': {key: 'different'}})
             self.assertNotEqual(result.returncode, 0)
             self.assertIn('must not override selector label', result.stderr)
+
+    def test_recreate_strategy_does_not_add_rolling_update(self):
+        dep = deployment({'deploymentStrategy': {'type': 'Recreate'}})
+        self.assertEqual(dep['spec']['strategy'], {'type': 'Recreate'})
+
+    def test_scalar_http_and_https_keep_legacy_service_port(self):
+        svc = service({'service': {'ports': {'http': 8020, 'https': 8443}}})
+        ports = {entry['name']: entry for entry in svc['spec']['ports']}
+        self.assertEqual(ports['http']['port'], 3001)
+        self.assertEqual(ports['http']['targetPort'], 8020)
+        self.assertEqual(ports['https']['port'], 3001)
+        self.assertEqual(ports['https']['targetPort'], 8443)

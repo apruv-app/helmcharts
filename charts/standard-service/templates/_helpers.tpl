@@ -74,6 +74,14 @@ values opt into explicit port and targetPort declarations.
 {{- end -}}
 {{- end }}
 
+{{- define "standard-service.httpsServicePort" -}}
+{{- if kindIs "map" .Values.service.ports.https -}}
+{{- required "service.ports.https.port is required when https is a map" .Values.service.ports.https.port -}}
+{{- else -}}
+3001
+{{- end -}}
+{{- end }}
+
 {{/* Return a usable Service port for the Helm connection test. */}}
 {{- define "standard-service.testServicePort" -}}
 {{- if .Values.service.ports.http -}}

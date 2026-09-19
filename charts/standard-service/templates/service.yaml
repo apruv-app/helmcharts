@@ -31,7 +31,7 @@ spec:
       targetPort: {{ default .Values.service.ports.https.port .Values.service.ports.https.targetPort }}
     {{- else }}
     - protocol: TCP
-      port: {{ .Values.service.ports.https }}
+      port: {{ include "standard-service.httpsServicePort" . }}
       name: https
       targetPort: {{ .Values.service.ports.https }}
     {{- end }}

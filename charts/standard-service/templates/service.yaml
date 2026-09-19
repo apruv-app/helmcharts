@@ -13,12 +13,12 @@ spec:
     {{- if .Values.service.ports.http }}
     {{- if kindIs "map" .Values.service.ports.http }}
     - protocol: TCP
-      port: {{ .Values.service.ports.http }}
+      port: {{ required "service.ports.http.port is required when http is a map" .Values.service.ports.http.port }}
       name: http
-      targetPort: {{ .Values.service.ports.http }}
+      targetPort: {{ default .Values.service.ports.http.port .Values.service.ports.http.targetPort }}
     {{- else }}
     - protocol: TCP
-      port: 3001
+      port: {{ include "standard-service.httpServicePort" . }}
       name: http
       targetPort: {{ .Values.service.ports.http }}
     {{- end }}
@@ -26,12 +26,12 @@ spec:
     {{- if .Values.service.ports.https }}
     {{- if kindIs "map" .Values.service.ports.https }}
     - protocol: TCP
-      port: {{ .Values.service.ports.https }}
+      port: {{ required "service.ports.https.port is required when https is a map" .Values.service.ports.https.port }}
       name: https
-      targetPort: {{ .Values.service.ports.https }}
+      targetPort: {{ default .Values.service.ports.https.port .Values.service.ports.https.targetPort }}
     {{- else }}
     - protocol: TCP
-      port: 3001
+      port: {{ include "standard-service.httpsServicePort" . }}
       name: https
       targetPort: {{ .Values.service.ports.https }}
     {{- end }}

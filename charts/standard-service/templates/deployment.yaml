@@ -37,6 +37,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       serviceAccountName: {{ include "standard-service.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -61,8 +62,8 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             {{- if .Values.service.ports.http }}
-            - name: https
-              containerPort: {{ .Values.service.ports.http }}
+            - name: http
+              containerPort: {{- if kindIs "map" .Values.service.ports.http }} {{ default .Values.service.ports.http.port .Values.service.ports.http.targetPort }}{{- else }} {{ .Values.service.ports.http }}{{- end }}
               protocol: TCP
             {{- end }}
             {{- if .Values.service.ports.health }}

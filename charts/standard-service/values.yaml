@@ -97,6 +97,9 @@ resources: {}
   #   memory: 128Mi
 
 autoscaling:
+  # Optional container CPU metric; empty retains whole-pod Resource behavior.
+  cpuContainerName: ""
+  behavior: {}
   enabled: false
   minReplicas: 1
   maxReplicas: 100

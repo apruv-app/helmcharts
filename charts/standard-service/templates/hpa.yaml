@@ -12,10 +12,20 @@ spec:
     name: {{ include "standard-service.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  {{- with .Values.autoscaling.behavior }}
+  behavior:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   metrics:
     {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.autoscaling.cpuContainerName }}
+    - type: ContainerResource
+      containerResource:
+        container: {{ .Values.autoscaling.cpuContainerName | quote }}
+    {{- else }}
     - type: Resource
       resource:
+    {{- end }}
         name: cpu
         target:
           type: Utilization

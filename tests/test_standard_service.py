@@ -95,11 +95,12 @@ class AutoscalingContract(unittest.TestCase):
 
     def test_container_cpu_does_not_change_memory_metric(self):
         behavior = {'scaleDown': {'stabilizationWindowSeconds': 600}}
-        hpa = self.hpa({'cpuContainerName': 'standard-service', 'targetMemoryUtilizationPercentage': 80, 'behavior': behavior})
+        hpa = self.hpa({'cpuContainerName': 'standard-service', 'targetMemoryUtilizationPercentage': 65, 'behavior': behavior})
         cpu, memory = hpa['spec']['metrics']
         self.assertEqual(cpu['type'], 'ContainerResource')
         self.assertEqual(cpu['containerResource']['container'], 'standard-service')
         self.assertEqual(cpu['containerResource']['target']['averageUtilization'], 80)
         self.assertEqual(memory['type'], 'Resource')
         self.assertEqual(memory['resource']['name'], 'memory')
+        self.assertEqual(memory['resource']['target']['averageUtilization'], 65)
         self.assertEqual(hpa['spec']['behavior'], behavior)

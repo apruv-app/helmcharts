@@ -80,3 +80,26 @@ class DeploymentContract(unittest.TestCase):
         self.assertEqual(ports['http']['targetPort'], 8020)
         self.assertEqual(ports['https']['port'], 3001)
         self.assertEqual(ports['https']['targetPort'], 8443)
+
+
+class AutoscalingContract(unittest.TestCase):
+    def hpa(self, values):
+        result = render({'autoscaling': {'enabled': True, **values}})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return next(doc for doc in yaml.safe_load_all(result.stdout) if doc and doc['kind'] == 'HorizontalPodAutoscaler')
+
+    def test_default_cpu_metric_is_unchanged(self):
+        hpa = self.hpa({})
+        self.assertEqual(hpa['spec']['metrics'][0]['type'], 'Resource')
+        self.assertNotIn('behavior', hpa['spec'])
+
+    def test_container_cpu_does_not_change_memory_metric(self):
+        behavior = {'scaleDown': {'stabilizationWindowSeconds': 600}}
+        hpa = self.hpa({'cpuContainerName': 'standard-service', 'targetMemoryUtilizationPercentage': 80, 'behavior': behavior})
+        cpu, memory = hpa['spec']['metrics']
+        self.assertEqual(cpu['type'], 'ContainerResource')
+        self.assertEqual(cpu['containerResource']['container'], 'standard-service')
+        self.assertEqual(cpu['containerResource']['target']['averageUtilization'], 80)
+        self.assertEqual(memory['type'], 'Resource')
+        self.assertEqual(memory['resource']['name'], 'memory')
+        self.assertEqual(hpa['spec']['behavior'], behavior)

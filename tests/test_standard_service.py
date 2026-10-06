@@ -104,3 +104,45 @@ class AutoscalingContract(unittest.TestCase):
         self.assertEqual(memory['resource']['name'], 'memory')
         self.assertEqual(memory['resource']['target']['averageUtilization'], 65)
         self.assertEqual(hpa['spec']['behavior'], behavior)
+
+
+def documents(values, kind):
+    result = render(values)
+    assert result.returncode == 0, result.stderr
+    return [doc for doc in yaml.safe_load_all(result.stdout) if doc and doc['kind'] == kind]
+
+
+class DisruptionAndLifecycleContract(unittest.TestCase):
+    def test_defaults_render_no_pdb_and_no_lifecycle(self):
+        self.assertEqual(documents({}, 'PodDisruptionBudget'), [])
+        container = deployment({})['spec']['template']['spec']['containers'][0]
+        self.assertNotIn('lifecycle', container)
+
+    def test_pdb_min_available_matches_deployment_selector(self):
+        values = {'podDisruptionBudget': {'enabled': True, 'minAvailable': 1}}
+        pdbs = documents(values, 'PodDisruptionBudget')
+        self.assertEqual(len(pdbs), 1)
+        pdb = pdbs[0]
+        self.assertEqual(pdb['apiVersion'], 'policy/v1')
+        self.assertEqual(pdb['metadata']['name'], 'test')
+        self.assertEqual(pdb['spec']['minAvailable'], 1)
+        self.assertNotIn('maxUnavailable', pdb['spec'])
+        self.assertEqual(pdb['spec']['selector']['matchLabels'], deployment(values)['spec']['selector']['matchLabels'])
+
+    def test_pdb_max_unavailable_and_percentages(self):
+        pdb = documents({'podDisruptionBudget': {'enabled': True, 'maxUnavailable': '25%'}}, 'PodDisruptionBudget')[0]
+        self.assertEqual(pdb['spec']['maxUnavailable'], '25%')
+        self.assertNotIn('minAvailable', pdb['spec'])
+
+    def test_pdb_rejects_both_or_neither_bound(self):
+        for spec in [{'enabled': True}, {'enabled': True, 'minAvailable': 1, 'maxUnavailable': 1}]:
+            result = render({'podDisruptionBudget': spec})
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('exactly one of minAvailable or maxUnavailable', result.stderr)
+
+    def test_lifecycle_is_passed_to_primary_container_only(self):
+        lifecycle = {'preStop': {'sleep': {'seconds': 10}}}
+        dep = deployment({'lifecycle': lifecycle, 'extraContainers': [{'name': 'proxy', 'image': 'proxy:test'}]})
+        containers = {c['name']: c for c in dep['spec']['template']['spec']['containers']}
+        self.assertEqual(containers['standard-service']['lifecycle'], lifecycle)
+        self.assertNotIn('lifecycle', containers['proxy'])

@@ -58,6 +58,22 @@ service:
 # process to drain. Keep lifecycle hooks shell-free for distroless images.
 terminationGracePeriodSeconds: 60
 
+# Optional container lifecycle hooks for the primary service container, for
+# example a shell-free preStop sleep that keeps serving while endpoints drop:
+# lifecycle:
+#   preStop:
+#     sleep:
+#       seconds: 10
+lifecycle: {}
+
+# Optional PodDisruptionBudget. Set exactly one of minAvailable or
+# maxUnavailable (integer or percentage). Leave disabled for single-replica
+# releases: minAvailable 1 with one pod blocks every voluntary eviction.
+podDisruptionBudget:
+  enabled: false
+  # minAvailable: 1
+  # maxUnavailable: 1
+
 jaegerTracing: false
 
 healthCheckTimeoutSeconds: 3

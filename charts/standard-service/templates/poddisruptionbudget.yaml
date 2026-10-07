@@ -1,0 +1,23 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+{{- $pdb := .Values.podDisruptionBudget }}
+{{- $hasMin := not (kindIs "invalid" $pdb.minAvailable) }}
+{{- $hasMax := not (kindIs "invalid" $pdb.maxUnavailable) }}
+{{- if eq $hasMin $hasMax }}
+{{- fail "podDisruptionBudget requires exactly one of minAvailable or maxUnavailable" }}
+{{- end }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "standard-service.fullname" . }}
+  labels:
+    {{- include "standard-service.labels" . | nindent 4 }}
+spec:
+  {{- if $hasMin }}
+  minAvailable: {{ $pdb.minAvailable }}
+  {{- else }}
+  maxUnavailable: {{ $pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "standard-service.selectorLabels" . | nindent 6 }}
+{{- end }}

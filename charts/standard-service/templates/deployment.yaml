@@ -88,6 +88,10 @@ spec:
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.lifecycle }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
